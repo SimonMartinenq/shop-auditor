@@ -9,7 +9,7 @@ Six étapes testables, environ 3 semaines à temps partiel. Une étape ne commen
 - [x] 4 mini-boutiques statiques dans `fixtures/sites/`, chacune avec un `expected.yaml` ; une boutique « propre » de contrôle
 - [x] Défauts plantés en priorité hors Lighthouse : JSON-LD Product sans prix/dispo, bouton panier hors écran sur mobile, frais de port invisibles avant le panier, fausse « app d'avis » présente dans `signatures.yaml` sur toutes les pages, même défaut répété sur 3 pages
 - [x] Serveur local des fixtures pour pytest (`tests/fixture_server.py`)
-- [ ] CI verte sur GitHub (nécessite de pousser le dépôt)
+- [x] CI verte sur GitHub
 
 **Fini quand** la CI sert les fixtures et passe.
 
