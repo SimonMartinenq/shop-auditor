@@ -9,4 +9,4 @@ Format : date — décision — raison. Les décisions ouvertes restent en haut 
 
 ## Prises
 
-- 2026-11-13 — Lockfile non committé à l'init, `uv` n'étant pas encore installé sur le poste ; à générer avec `uv sync`.
+- 2026-11-13 — Packaging avec uv + hatchling, `uv.lock` committé pour des installations reproductibles (CI identique au poste local).

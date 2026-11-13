@@ -4,7 +4,7 @@ Six étapes testables, environ 3 semaines à temps partiel. Une étape ne commen
 
 ## Étape 1 — Socle et fixtures
 - [x] Repo initialisé (git, pyproject, arborescence, CI)
-- [ ] `uv sync` + `uv.lock` committé
+- [x] `uv sync` + `uv.lock` committé
 - [ ] Modèles Pydantic : `SiteSnapshot`, `PageSnapshot`, `Finding`, `AuditReport` (`models.py`)
 - [ ] 4 à 6 mini-boutiques statiques dans `fixtures/sites/`, chacune avec un `expected.yaml` ; une boutique « propre » de contrôle
 - [ ] Défauts plantés en priorité hors Lighthouse : JSON-LD Product sans prix/dispo, bouton panier hors écran sur mobile, frais de port invisibles avant le panier, fausse « app d'avis » présente dans `signatures.yaml` sur toutes les pages, même défaut répété sur 3 pages
