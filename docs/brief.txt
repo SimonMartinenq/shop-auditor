@@ -1,0 +1,220 @@
+Brief agent — Auditeur de boutique e-commerce (agent Python)
+11 nov. 2026 · @boss
+Contexte et objectif
+Ce projet portfolio prouve une maîtrise de Python et d'un framework d'agent sur un cas métier concret : auditer une boutique en ligne et produire un plan d'action priorisé. Il peut aussi servir d'outil réel pour une activité freelance e-commerce (Shopify / WooCommerce).
+Nom de travail : shop-auditor.
+Le produit en une phrase : une couche d'interprétation métier e-commerce au-dessus des outils standard. On donne l'URL d'une boutique ; le collecteur lance Lighthouse et axe-core sur le parcours d'achat complet, ajoute des vérifications spécifiques au e-commerce et attribue chaque script tiers à l'app ou au plugin qui le charge ; un agent agrège le tout sur plusieurs pages, analyse les captures et produit un plan d'action priorisé par impact sur les ventes, lisible par un gérant non technique.
+Utilisateurs cibles : le gérant d'une boutique, et le développeur freelance qui veut un diagnostic rapide avant un devis.
+Ce que le projet doit démontrer :
+• Automatisation de navigateur et collecte de données fiables en Python (async).
+• Un agent basé sur un framework reconnu, avec outils, sortie structurée et usage de la vision (analyse de captures).
+• Une règle forte : les mesures viennent des outils, l'agent interprète et priorise ; chaque recommandation cite la preuve mesurée.
+• Tests, évals reproductibles sur un jeu de pages de référence, observabilité et démo en ligne.
+Différence avec le projet « empreinte carbone » : ici la boucle agent repose sur un framework (Claude Agent SDK ou PydanticAI) plutôt qu'une boucle maison. Les deux projets ensemble montrent les deux approches.
+Pourquoi pas juste Lighthouse ?
+shop-auditor utilise Lighthouse et ne cherche pas à le remplacer : il ajoute ce que Lighthouse ne fait pas. Cette section doit figurer telle quelle (ou presque) dans le README.
+Lighthouse seul
+shop-auditor
+Audite une page isolée
+Audite le parcours accueil → collection → produit → panier, et regroupe un même problème présent sur plusieurs pages en un seul constat
+Générique, ignore le e-commerce
+Vérifie données structurées Product complètes, réassurance (livraison, retours, avis), visibilité du bouton panier sur mobile, comportement du panier
+« Reduce unused JavaScript », 1,2 s de JS tiers
+« L'app d'avis X coûte 1,2 s sur la fiche produit » : attribution des scripts aux apps Shopify / plugins WooCommerce, avec réglage ou alternative
+Rapport pour développeur
+Top 5 priorisé par impact business pour le gérant, détails techniques en annexe
+Ne regarde pas la page
+Analyse visuelle du parcours (hiérarchie, CTA, friction) sur captures mobile et desktop
+Limites assumées : des SaaS d'audit e-commerce existent et Shopify fournit son propre rapport de vitesse. Le projet ne prétend pas les battre ; il démontre la construction d'une couche d'analyse spécialisée et vérifiable au-dessus d'outils de référence. Le piège à éviter est l'outil « Lighthouse + un LLM qui reformule » : la valeur doit venir des vérifications e-commerce, de l'attribution et de l'agrégation, mesurées par les évals.
+Périmètre V1
+La V1 audite 4 à 6 pages types d'une boutique publique (accueil, collection, fiche produit, panier, une page de contenu) sur six axes, en mobile et desktop. Les mesures génériques viennent de Lighthouse ; l'effort de développement porte sur les trois derniers axes, que Lighthouse ne couvre pas.
+Axe
+Source des mesures
+Analyse par l'agent
+Performance
+Lighthouse (LCP, CLS, TBT, poids, opportunités) + données terrain CrUX via PageSpeed Insights si disponibles
+Identifier les 3 causes principales sur l'ensemble du parcours
+Accessibilité
+axe-core complet (plus large que le sous-ensemble de Lighthouse)
+Regrouper, expliquer en langage clair, rattacher aux critères RGAA/WCAG
+SEO technique
+Lighthouse (bases) + contrôles maison : canonical et duplication entre variantes, sitemap, liens cassés
+Prioriser selon l'impact trafic
+E-commerce (maison)
+Données structurées Product complètes (prix, devise, dispo, avis), réassurance détectée dans le DOM (livraison, retours, paiement, avis), bouton panier visible sans défiler sur mobile, ajout au panier fonctionnel, frais de port affichés avant le panier
+Mesurer la friction du parcours et les manques de confiance
+Scripts tiers (maison)
+Requêtes réseau groupées par domaine, attribuées à une app Shopify ou un plugin WooCommerce via une table de signatures (data/signatures.yaml), coût en ms et Ko par app et par page
+« Cette app coûte X s » + réglage ou alternative
+Parcours visuel + éco
+Captures mobile/desktop ; EcoIndex et hébergement vert
+Analyse visuelle (vision) : clarté du CTA, hiérarchie, friction ; actions de sobriété
+Sortie : rapport structuré JSON + rendu HTML, avec un score par axe, une liste de constats (preuve, sévérité, recommandation, effort, impact) et un top 5 « à faire cette semaine ».
+Détection de plateforme : identifier Shopify / WooCommerce / autre (en-têtes, assets, variables JS) pour adapter les recommandations (ex. app Shopify qui charge un script lourd).
+Hors périmètre V1 :
+• Pages derrière connexion et passage réel de commande (on s'arrête au panier, sans paiement).
+• Crawl complet du site : on se limite aux pages types, max 10 URLs.
+• Audit RGAA complet et certifiant : l'automatique ne couvre qu'une partie des critères, le rapport le dit.
+• Suivi dans le temps (V2 : audits planifiés et historique).
+Règles d'usage : respecter robots.txt, une seule session lente (pas de charge), User-Agent identifiable, n'auditer que des sites publics.
+Stack et choix techniques
+Python 3.12+ avec uv, Lighthouse et axe-core pour les mesures standard, Playwright async pour le parcours et les contrôles maison, et un framework d'agent pour l'analyse. On ne réimplémente aucune mesure qu'un outil de référence fournit déjà.
+Besoin
+Choix
+Pourquoi
+Performance, SEO de base
+Lighthouse CLI (Node, lancé en sous-processus avec sortie JSON, sur le Chromium de Playwright via --port) ; option : API PageSpeed Insights (clé Google gratuite) pour les données terrain CrUX
+Outil de référence, ne pas le réinventer
+Accessibilité
+axe-playwright-python (axe-core complet)
+Moteur de référence, plus de règles que Lighthouse
+Parcours et contrôles e-commerce
+Playwright (async, Chromium), émulation mobile, interception réseau
+Ajout au panier, captures, requêtes
+Attribution des scripts tiers
+Table de signatures YAML (domaine / motif d'URL / variable JS → app ou plugin), enrichie au fil des audits
+Le cœur de la valeur métier
+Éco-conception
+Calcul EcoIndex (bibliothèque ecoindex du CNUMR ou formule réimplémentée) + API Green Web Foundation
+Indicateur français reconnu
+Parsing HTML
+selectolax ou BeautifulSoup ; extruct pour JSON-LD et microdata
+Données structurées Product
+Agent
+Claude Agent SDK (outils Python déclarés en serveur MCP in-process) ou PydanticAI (sortie typée native) — en choisir un et justifier dans le README
+Framework demandé dans les offres
+Vision
+Captures PNG envoyées au modèle Claude
+Analyse du parcours
+Modèles
+Pydantic v2
+Contrats entre collecte et agent
+API / UI
+FastAPI + page de démo (HTMX ou HTML simple), tâche d'audit asynchrone avec statut
+Un audit prend 1 à 3 minutes
+File de tâches
+asyncio + SQLite en V1
+Simplicité
+Qualité
+Ruff, mypy strict, pytest, pytest-asyncio
+CI crédible
+Observabilité
+Logfire ou Langfuse
+Traces, coût
+Livraison
+Docker (image Playwright officielle + Node pour Lighthouse), Fly.io ou Railway
+Démo en ligne
+Point de licence : les valeurs d'ACV utilisées par EcoIndex ne sont pas sous licence libre (© Frédéric Bordage). L'agent de code doit vérifier les conditions d'usage et les mentionner dans le README ; à défaut, n'afficher que la note EcoIndex sans les valeurs GES/eau.
+Variables d'environnement : ANTHROPIC_API_KEY, PAGESPEED_API_KEY (optionnelle), SHOP_AUDITOR_MODEL.
+Architecture
+Deux phases séparées : une collecte déterministe qui produit un SiteSnapshot sérialisé sur disque, puis une analyse par l'agent qui ne lit que ce snapshot. On peut donc rejouer l'analyse sans recrawler, ce qui rend les évals reproductibles et bon marché.
+Flux d'un audit :
+1.  L'utilisateur fournit une URL. Le collecteur vérifie robots.txt, détecte la plateforme et choisit les pages types (accueil, 1 collection, 1 produit, panier via ajout au panier, 1 page de contenu) en suivant les liens.
+2.  Pour chaque page et chaque viewport (mobile, desktop) : rapport Lighthouse JSON, axe-core, requêtes réseau attribuées aux apps/plugins, contrôles e-commerce, extraction SEO complémentaire, EcoIndex, capture d'écran. Puis agrégation multi-pages en code : un problème identique sur plusieurs pages devient une seule entrée avec la liste des pages.
+3.  Le snapshot (JSON + PNG) est écrit dans runs/<domaine>/<horodatage>/.
+4.  L'agent reçoit un résumé compact du snapshot et des outils pour creuser chaque partie (il ne reçoit pas tout le JSON d'un bloc).
+5.  L'agent produit un AuditReport validé ; un contrôle en code vérifie que chaque constat référence une preuve existante du snapshot.
+6.  Rendu HTML du rapport.
+shop-auditor/
+├── pyproject.toml
+├── package.json               # lighthouse (dépendance Node épinglée)
+├── README.md                  # dont « Pourquoi pas juste Lighthouse ? »
+├── CLAUDE.md
+├── Dockerfile
+├── .github/workflows/ci.yml
+├── data/
+│   └── signatures.yaml        # scripts tiers -> app Shopify / plugin WooCommerce
+├── src/shop_auditor/
+│   ├── models.py              # SiteSnapshot, PageSnapshot, Finding, AuditReport
+│   ├── collect/
+│   │   ├── crawler.py         # robots, choix des pages, parcours jusqu'au panier
+│   │   ├── platform.py        # détection Shopify/WooCommerce
+│   │   ├── lighthouse.py      # sous-processus Lighthouse, parsing JSON
+│   │   ├── accessibility.py   # axe-core
+│   │   ├── ecommerce.py       # Product JSON-LD, réassurance, CTA, panier
+│   │   ├── third_parties.py   # attribution des requêtes aux apps/plugins
+│   │   ├── seo.py             # contrôles complémentaires à Lighthouse
+│   │   ├── eco.py             # EcoIndex + Green Web
+│   │   ├── screenshots.py
+│   │   └── aggregate.py       # déduplication multi-pages
+│   ├── agent/
+│   │   ├── tools.py           # outils de lecture du snapshot
+│   │   ├── auditor.py         # config framework, prompt, exécution
+│   │   ├── checks.py          # contrôles post-génération
+│   │   └── render.py          # HTML (Jinja2)
+│   ├── api.py
+│   └── cli.py                 # collect | analyze | audit
+├── fixtures/sites/            # boutiques statiques de test (bonnes et mauvaises)
+├── evals/
+└── tests/
+Outils de l'agent et rapport
+L'agent n'a que des outils en lecture sur le snapshot : il ne navigue pas lui-même, ce qui rend son comportement prévisible et testable.
+Outil
+Rôle
+get_overview()
+Résumé : plateforme, pages auditées, scores par axe, problèmes agrégés les plus fréquents
+get_performance(page_id, viewport)
+Métriques et opportunités Lighthouse, données terrain si dispo
+get_third_parties(page_id | None)
+Coût par app/plugin (ms, Ko, pages concernées), scripts non attribués
+get_ecommerce(page_id | None)
+Résultats des contrôles e-commerce : Product JSON-LD, réassurance, CTA, panier
+get_accessibility(page_id, severity_min)
+Violations axe regroupées par règle, avec sélecteurs d'exemple
+get_seo(page_id)
+Audits SEO Lighthouse + contrôles complémentaires
+get_eco()
+EcoIndex par page, hébergement vert
+view_screenshot(page_id, viewport)
+Renvoie la capture en image pour analyse visuelle
+submit_report(report: AuditReport)
+Fin de l'analyse, validation Pydantic
+Prompt système (points clés) :
+• Rôle : consultant e-commerce senior, en français, pour un gérant non technique ; détails techniques en annexe pour le développeur.
+• Chaque constat cite sa preuve (evidence_ref vers une donnée du snapshot) ; aucun chiffre sans source.
+• Prioriser par impact business (conversion, trafic, accessibilité légale) puis par effort.
+• Pour l'analyse visuelle, rester factuel (« le bouton d'ajout au panier n'est pas visible sans défiler sur mobile ») plutôt que des goûts esthétiques.
+• Adapter les recommandations à la plateforme détectée, et nommer l'app ou le plugin en cause quand l'attribution le permet. Ne pas paraphraser un audit Lighthouse : le traduire en action concrète ou le regrouper avec d'autres constats.
+Modèle AuditReport : site_url, platform, audited_at, pages: list[PageRef], scores: dict[Axis, int] (0–100, calculés en code à partir des mesures, pas par le LLM), summary (5 lignes max), findings: list[Finding], quick_wins: list[finding_id] (5 max), limitations: list[str].
+Modèle Finding : id, axis, title, severity (critique/majeur/mineur), evidence_ref, evidence_summary, recommendation, effort (faible/moyen/fort), impact (faible/moyen/fort), pages: list[page_id], platform_hint optionnel.
+Contrôles post-génération (checks.py) : chaque evidence_ref existe dans le snapshot ; les quick_wins référencent des constats existants ; pas de constat dupliqué ; toute violation axe « critical » apparaît dans au moins un constat. En cas d'échec, renvoyer les erreurs à l'agent (2 essais max).
+Évals, tests et observabilité
+Le point fort du projet : des sites de test avec défauts plantés volontairement, qui permettent de mesurer objectivement si l'agent les trouve.
+Fixtures (fixtures/sites/) : 4 à 6 mini-boutiques statiques servies localement pendant les tests, chacune avec des défauts connus listés dans un expected.yaml (ex. image hero de 4 Mo, bouton panier sans label, pas de meta description, CLS provoqué par une bannière, script tiers bloquant). Une boutique « propre » sert de contrôle. Les défauts plantés couvrent en priorité ce que Lighthouse ne voit pas : JSON-LD Product sans prix ni disponibilité, bouton panier hors écran sur mobile, frais de port invisibles avant le panier, script d'une fausse « app d'avis » présente dans signatures.yaml et chargée sur toutes les pages, même défaut répété sur 3 pages (test de l'agrégation).
+Tests (pytest, en CI, sans LLM) :
+• Chaque collecteur contre les fixtures : il doit détecter chaque défaut planté de son axe.
+• Détection de plateforme sur des extraits HTML Shopify/WooCommerce enregistrés.
+• Calcul des scores par axe (fonctions pures).
+• checks.py sur des rapports valides et invalides fabriqués à la main.
+• Outils de l'agent sur un snapshot figé.
+Évals (evals/, appels LLM réels, hors CI) : l'analyse est rejouée sur les snapshots figés des fixtures.
+• Rappel : part des défauts plantés retrouvés dans les constats (cible ≥ 90 %).
+• Précision : part des constats rattachés à une preuve réelle (cible 100 %, garanti par checks.py) et faux positifs sur la boutique propre.
+• Priorisation : les défauts marqués « critique » dans expected.yaml sont dans le top 5.
+• Valeur ajoutée vs Lighthouse : part des défauts plantés retrouvés par shop-auditor que le rapport Lighthouse brut ne signale pas ; chiffre affiché dans le README. Coût et latence par audit ; comparaison entre deux modèles (un léger, un plus puissant) présentée dans le README.
+Observabilité : un span par page collectée et par appel LLM/outil ; le rapport HTML affiche en pied de page la durée, le coût et la version du modèle.
+Plan d'implémentation
+Six étapes testables ; environ 3 semaines à temps partiel.
+[ ] Étape 1 — Socle et fixtures : repo uv, CI, modèles Pydantic, 4 à 6 boutiques de test avec expected.yaml, serveur local pour les tests. Fini quand la CI sert les fixtures et passe.
+[ ] Étape 2 — Collecteurs : crawler + robots, plateforme, intégration Lighthouse, accessibilité, contrôles e-commerce, attribution des scripts tiers (une vingtaine de signatures d'apps Shopify et plugins WooCommerce courants pour commencer), SEO complémentaire, éco, captures, agrégation multi-pages. Fini quand chaque défaut planté est détecté par les tests et que shop-auditor collect <url> écrit un snapshot complet sur une vraie boutique publique.
+[ ] Étape 3 — Scores et outils agent : calcul des scores en code, outils de lecture du snapshot. Fini quand tout est testé sur un snapshot figé.
+[ ] Étape 4 — Agent : framework choisi, prompt, vision, submit_report, contrôles, rendu HTML, commande analyze et audit. Fini quand un rapport valide est produit pour chaque fixture.
+[ ] Étape 5 — Évals et observabilité : script d'éval, comparaison de deux modèles, traces. Fini quand rappel, précision et coût sont publiés dans le README.
+[ ] Étape 6 — Livraison : FastAPI avec tâche asynchrone et statut, page de démo, Docker sur image Playwright, déploiement, protections (limite de requêtes, liste de domaines bloqués, budget LLM journalier, timeout global), README final avec GIF et exemple de rapport. Fini quand la démo est en ligne.
+Consignes pour l'agent de code
+À copier dans CLAUDE.md.
+Règle n°1 : ne jamais réimplémenter une mesure que Lighthouse ou axe-core fournit déjà. L'effort va aux contrôles e-commerce, à l'attribution des scripts, à l'agrégation et à l'analyse.
+• Avancer étape par étape ; une étape commence quand la précédente passe ses tests.
+• Vérifier la version installée de Playwright, du framework d'agent et du SDK anthropic, et suivre leur API actuelle, pas des exemples de mémoire.
+• Vérifier la licence et l'API de la bibliothèque EcoIndex avant de l'intégrer ; consigner la décision dans docs/decisions.md.
+• Aucun appel réseau externe ni LLM dans la CI : fixtures locales et mocks uniquement.
+• Collecte : toujours un timeout par page et global, fermeture propre du navigateur, une page à la fois, respect de robots.txt.
+• Jamais de soumission de formulaire de paiement ni de création de compte sur le site audité.
+• Typage complet, mypy strict ; fonctions de scoring pures.
+• Code en anglais, rapport et README en français.
+• Simplicité : pas de base de données serveur ni de file de tâches externe en V1.
+• Commits petits et explicites (Conventional Commits).
+Sources
+• Lighthouse (Google Chrome) — vérifier la version actuelle et les options CLI dans sa documentation officielle avant l'intégration
+• axe-playwright-python — axe-core via Playwright en Python
+• ecoindex_python (CNUMR) — calcul EcoIndex (taille DOM, poids, requêtes) et mention de licence des valeurs d'ACV
