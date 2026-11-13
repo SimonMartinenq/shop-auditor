@@ -1,0 +1,7 @@
+# Signatures de test : la fausse app d'avis des boutiques de fixtures.
+# Les vraies signatures (apps Shopify, plugins WooCommerce) iront dans data/signatures.yaml
+# à l'étape 2 ; le format pourra évoluer d'ici là.
+- app: FakeReviews
+  category: reviews
+  url_patterns: ["/apps/fakereviews/"]
+  js_globals: [FakeReviews]

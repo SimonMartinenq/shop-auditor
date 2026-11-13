@@ -1,0 +1,38 @@
+# Boutique sans confiance : défauts e-commerce invisibles pour Lighthouse.
+port: 8703
+platform: other
+defects:
+  - id: product-jsonld-incomplete
+    axis: ecommerce
+    severity: major
+    pages: [product]
+    description: JSON-LD Product sans offers (prix, devise, disponibilité) ni aggregateRating.
+    lighthouse_detects: false
+
+  - id: mobile-cta-below-fold
+    axis: ecommerce
+    severity: critical
+    pages: [product]
+    description: Sur mobile, trois photos empilées repoussent le bouton « Ajouter au panier » sous la ligne de flottaison.
+    lighthouse_detects: false
+
+  - id: add-to-cart-broken
+    axis: ecommerce
+    severity: critical
+    pages: [product]
+    description: Le clic sur « Ajouter au panier » lève une erreur JS ; le panier reste vide.
+    lighthouse_detects: false
+
+  - id: shipping-hidden-before-cart
+    axis: ecommerce
+    severity: major
+    pages: [product]
+    description: Aucun frais de port affiché avant le panier, où apparaissent 6,90 €.
+    lighthouse_detects: false
+
+  - id: no-reassurance
+    axis: ecommerce
+    severity: major
+    pages: [home, product]
+    description: Aucune mention de livraison, retours, paiement sécurisé ou avis clients.
+    lighthouse_detects: false

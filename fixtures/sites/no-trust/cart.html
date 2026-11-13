@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Panier — Atelier Grès</title>
+  <meta name="description" content="Votre panier Atelier Grès.">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <a href="/" class="logo">Atelier Grès</a>
+    <nav>
+      <a href="/collection.html">Boutique</a>
+      <a href="/about.html">À propos</a>
+      <a href="/cart.html">Panier (<span id="cart-count">0</span>)</a>
+    </nav>
+  </header>
+  <main>
+    <h1>Votre panier</h1>
+    <p id="cart-empty">Votre panier est vide.</p>
+    <ul id="cart-items"></ul>
+    <dl class="totals">
+      <dt>Sous-total</dt><dd id="subtotal">0,00 €</dd>
+      <dt>Livraison</dt><dd id="shipping">—</dd>
+      <dt>Total</dt><dd id="total">0,00 €</dd>
+    </dl>
+    <button type="button" disabled>Commander (démo)</button>
+  </main>
+  <footer><a href="/about.html">Notre atelier</a></footer>
+  <script src="/shop.js" defer></script>
+</body>
+</html>

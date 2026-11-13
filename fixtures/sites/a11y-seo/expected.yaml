@@ -1,0 +1,45 @@
+# Boutique accessibilité + SEO, dont un défaut répété sur 3 pages (test de l'agrégation).
+port: 8704
+platform: other
+defects:
+  - id: cart-button-no-label
+    axis: accessibility
+    severity: critical
+    pages: [product]
+    description: Bouton d'ajout au panier en icône SVG seule, sans texte ni aria-label (règle axe button-name).
+    lighthouse_detects: true
+
+  - id: images-missing-alt
+    axis: accessibility
+    severity: major
+    pages: [home, collection, product]
+    description: Images produit sans attribut alt sur 3 pages ; doit devenir un seul constat agrégé.
+    lighthouse_detects: true
+
+  - id: meta-description-missing
+    axis: seo
+    severity: major
+    pages: [home, collection, product, cart, content]
+    description: Aucune page n'a de meta description.
+    lighthouse_detects: true
+
+  - id: variant-duplicate-no-canonical
+    axis: seo
+    severity: minor
+    pages: [product]
+    description: product.html?variant=petit et ?variant=grand servent le même contenu, sans balise canonical.
+    lighthouse_detects: false
+
+  - id: broken-link
+    axis: seo
+    severity: minor
+    pages: [content]
+    description: La page « Notre atelier » pointe vers /livraison.html, qui renvoie 404.
+    lighthouse_detects: false
+
+  - id: sitemap-missing
+    axis: seo
+    severity: minor
+    pages: []
+    description: Pas de sitemap.xml, et robots.txt ne déclare aucun sitemap.
+    lighthouse_detects: false

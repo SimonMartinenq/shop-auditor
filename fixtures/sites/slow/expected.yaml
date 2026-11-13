@@ -1,0 +1,27 @@
+# Boutique lente : poids, layout shift et app tierce bloquante.
+port: 8702
+platform: other
+defects:
+  - id: hero-image-weight
+    axis: performance
+    severity: major
+    pages: [home]
+    description: Image hero PNG d'environ 4 Mo (générée par tests/fixture_server.py).
+    lighthouse_detects: true
+
+  - id: promo-banner-cls
+    axis: performance
+    severity: major
+    pages: [home, collection, product, cart, content]
+    description: Bannière promo insérée en haut de page 800 ms après le chargement (CLS), sur toutes les pages.
+    lighthouse_detects: true
+
+  - id: fakereviews-blocking
+    axis: third_parties
+    severity: critical
+    pages: [home, collection, product, cart, content]
+    description: >-
+      L'app d'avis FakeReviews (signature dans fixtures/signatures.yaml) est chargée de façon
+      synchrone dans le <head> de toutes les pages et bloque le thread principal ~300 ms.
+      Lighthouse signale un script bloquant mais ne l'attribue pas à l'app.
+    lighthouse_detects: false

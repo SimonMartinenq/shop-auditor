@@ -9,3 +9,4 @@ node_modules/
 runs/
 dist/
 .DS_Store
+fixtures/sites/slow/img/hero.png

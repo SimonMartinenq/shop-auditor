@@ -1,0 +1,19 @@
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, sans-serif; color: #222; background: #fdfaf6; }
+header { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; padding: 1rem; background: #fff; }
+nav { display: flex; gap: 1rem; }
+a { color: #1d4e89; }
+.logo { font-weight: 700; text-decoration: none; }
+main { max-width: 960px; margin: 0 auto; padding: 1rem; }
+img { max-width: 100%; height: auto; display: block; }
+.hero { padding: 2rem 0; }
+.button, .add-to-cart { display: inline-block; padding: .75rem 1.5rem; border: 0; border-radius: 4px; background: #1d4e89; color: #fff; font-size: 1rem; text-decoration: none; cursor: pointer; }
+.card { display: block; padding: 1rem; background: #fff; text-decoration: none; }
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); padding: 0; list-style: none; }
+.price { font-size: 1.5rem; font-weight: 700; margin: 0; }
+.reassurance { padding-left: 1.2rem; }
+.totals { display: grid; grid-template-columns: auto 1fr; gap: .25rem 1rem; }
+footer { padding: 2rem 1rem; text-align: center; font-size: .9rem; }
+@media (min-width: 768px) {
+  .product { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+}

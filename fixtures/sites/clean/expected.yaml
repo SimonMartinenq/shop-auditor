@@ -1,0 +1,4 @@
+# Boutique de contrôle : aucun défaut planté. Tout constat de l'agent ici est un faux positif.
+port: 8701
+platform: other
+defects: []
